@@ -31,39 +31,39 @@ CLIENT_ID = os.environ.get("CLIENT_ID", "")
 CLIENT_SECRET = os.environ.get("CLIENT_SECRET", "")
 REFRESH_TOKEN = os.environ.get("REFRESH_TOKEN", "")
 BLOG_ID = os.environ.get("BLOG_ID", "")
-YOUR_BLOG_URL = os.environ.get("BLOG_URL", "https://yournailart.blogspot.com")
+YOUR_BLOG_URL = os.environ.get("BLOG_URL", "https://nailovia.yourbolt.online")
 
 # ==========================================
-# FEEDS (Nail Art Categories)
+# FEEDS (Real Nail Art Blogs - Listicle Style)
 # ==========================================
 FEEDS = {
-    "Nail Art Trends": "https://www.scratchmagazine.co.uk/feed/",
-    "Nail Trends & News": "https://www.bangstyle.com/feed/",
-    "Nail Design Ideas": "https://www.themilliondollarmama.com/feed/",
-    "Simple Nail Designs": "https://nailsblaze.com/feed/",
-    "Nail Care & Health": "https://www.organicauthority.com/tag/nail/feed",
-    "Nail Art Inspiration": "https://pak.net.pk/tag/nail-art/feed/",
-    "Nail Tutorials & Guides": "https://choosynails.com/feed/",
-    "Nail Trends Gallery": "https://mirelleinspo.com/feed/",
-    "Nail Design & Art": "https://www.nailsmag.com/feed/",
-    "Beauty & Nail Trends": "https://www.refinery29.com/feed/",
-    "Fashion & Nail Trends": "https://www.vogue.com/feed/",
-    "Entertainment & Nail Art": "https://dailyshowbiz.net/feed/",
+    "Nail Art Trends": "https://sonailicious.com/feed/",
+    "Nail Design Ideas": "https://www.naildesigns.com/feed/",
+    "Nail Art Gallery": "https://nailartgallery.com/feed/",
+    "Nail Tutorials": "https://choosynails.com/feed/",
+    "Nail Art Inspiration": "https://nailsblaze.com/feed/",
+    "Beauty & Nails": "https://www.bangstyle.com/feed/",
+    "Nail Trends 2026": "https://www.scratchmagazine.co.uk/feed/",
+    "Simple Nail Designs": "https://www.themilliondollarmama.com/feed/",
+    "Nail Care Tips": "https://www.organicauthority.com/tag/nail/feed",
+    "Nail Art & Design": "https://www.nailsmag.com/feed/",
+    "Pretty Nail Ideas": "https://mirelleinspo.com/feed/",
+    "Nail Polish Trends": "https://pak.net.pk/tag/nail-art/feed/",
 }
 
 LABEL_MAP = {
     "Nail Art Trends": "Nail Art Trends",
-    "Nail Trends & News": "Nail Trends & News",
     "Nail Design Ideas": "Nail Design Ideas",
-    "Simple Nail Designs": "Simple Nail Designs",
-    "Nail Care & Health": "Nail Care & Health",
+    "Nail Art Gallery": "Nail Art Gallery",
+    "Nail Tutorials": "Nail Tutorials",
     "Nail Art Inspiration": "Nail Art Inspiration",
-    "Nail Tutorials & Guides": "Nail Tutorials & Guides",
-    "Nail Trends Gallery": "Nail Trends Gallery",
-    "Nail Design & Art": "Nail Design & Art",
-    "Beauty & Nail Trends": "Beauty & Nail Trends",
-    "Fashion & Nail Trends": "Fashion & Nail Trends",
-    "Entertainment & Nail Art": "Entertainment & Nail Art",
+    "Beauty & Nails": "Beauty & Nails",
+    "Nail Trends 2026": "Nail Trends 2026",
+    "Simple Nail Designs": "Simple Nail Designs",
+    "Nail Care Tips": "Nail Care Tips",
+    "Nail Art & Design": "Nail Art & Design",
+    "Pretty Nail Ideas": "Pretty Nail Ideas",
+    "Nail Polish Trends": "Nail Polish Trends",
 }
 
 POSTED_URLS_FILE = "posted_urls.txt"
@@ -71,10 +71,10 @@ POSTED_TITLES_FILE = "posted_titles.txt"
 POSTED_IMAGES_FILE = "posted_images.txt"
 POSTED_HASHES_FILE = "posted_hashes.txt"
 
-# Keywords to filter nail-related posts
 NAIL_KEYWORDS = [
     "nail", "nails", "manicure", "pedicure", "polish", "gel",
-    "acrylic", "lacquer", "cuticle", "nail art", "nail design"
+    "acrylic", "lacquer", "cuticle", "nail art", "nail design",
+    "nail idea", "nail trend", "nail inspo", "nail tutorial"
 ]
 
 # ==========================================
@@ -123,7 +123,7 @@ def normalize_title(title):
 def content_hash(text):
     if not text:
         return ""
-    snippet = re.sub(r'\s+', '', text[:200]).strip().lower()
+    snippet = re.sub(r'\s+', '', text[:300]).strip().lower()
     return hashlib.md5(snippet.encode('utf-8')).hexdigest()
 
 def has_english_letters(text):
@@ -132,25 +132,14 @@ def has_english_letters(text):
     return bool(re.search(r'[A-Za-z]', text))
 
 def has_non_english_script(text):
-    """Check if text contains non-English scripts like Urdu, Arabic, Hindi, etc."""
     if not text:
         return True
     bad_ranges = [
-        (0x0600, 0x06FF),  # Arabic / Urdu
-        (0x0750, 0x077F),  # Arabic Supplement
-        (0x0900, 0x097F),  # Devanagari
-        (0x0980, 0x09FF),  # Bengali
-        (0x0A00, 0x0A7F),  # Gurmukhi
-        (0x0A80, 0x0AFF),  # Gujarati
-        (0x0B00, 0x0B7F),  # Oriya
-        (0x0B80, 0x0BFF),  # Tamil
-        (0x0C00, 0x0C7F),  # Telugu
-        (0x0C80, 0x0CFF),  # Kannada
-        (0x0D00, 0x0D7F),  # Malayalam
-        (0x0D80, 0x0DFF),  # Sinhala
-        (0x0E00, 0x0E7F),  # Thai
-        (0x0E80, 0x0EFF),  # Lao
-        (0x4E00, 0x9FFF),  # CJK
+        (0x0600, 0x06FF), (0x0750, 0x077F), (0x0900, 0x097F),
+        (0x0980, 0x09FF), (0x0A00, 0x0A7F), (0x0A80, 0x0AFF),
+        (0x0B00, 0x0B7F), (0x0B80, 0x0BFF), (0x0C00, 0x0C7F),
+        (0x0C80, 0x0CFF), (0x0D00, 0x0D7F), (0x0D80, 0x0DFF),
+        (0x0E00, 0x0E7F), (0x0E80, 0x0EFF), (0x4E00, 0x9FFF),
     ]
     for char in text:
         code = ord(char)
@@ -162,6 +151,83 @@ def has_non_english_script(text):
 def is_nail_related(title, text):
     combined = (title + " " + (text or "")).lower()
     return any(keyword in combined for keyword in NAIL_KEYWORDS)
+
+# ==========================================
+# FULL ARTICLE SCRAPER (NEW - Main Update)
+# ==========================================
+
+def scrape_full_article(url, headers):
+    """
+    RSS link pe ja kar poori article scrape karta hai.
+    Returns: (full_text, list_of_image_urls)
+    """
+    try:
+        response = requests.get(url, headers=headers, timeout=20)
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        # Scripts and styles remove karein
+        for tag in soup(['script', 'style', 'nav', 'footer', 'header', 'aside', 'form', 'iframe']):
+            tag.decompose()
+
+        # Main article body dhoondein
+        article_body = None
+        selectors = [
+            'article',
+            'div.entry-content',
+            'div.post-content',
+            'div.article-content',
+            'div.blog-post-content',
+            'div.content-area',
+            'main',
+        ]
+        for sel in selectors:
+            article_body = soup.select_one(sel)
+            if article_body:
+                break
+
+        if not article_body:
+            article_body = soup.body if soup.body else soup
+
+        # Saari images nikaalein
+        images = []
+        for img in article_body.find_all('img'):
+            src = img.get('src') or img.get('data-src') or img.get('data-lazy-src')
+            if not src or not src.startswith('http'):
+                continue
+            # Skip small icons, avatars, ads
+            if any(skip in src.lower() for skip in ['avatar', 'icon', 'logo', 'ad-', 'ads.', '1x1', 'pixel', 'gravatar']):
+                continue
+            if src not in images:
+                images.append(src)
+                if len(images) >= 40:
+                    break
+
+        # Fallback: og:image
+        if not images:
+            og_img = soup.find('meta', property='og:image')
+            if og_img and og_img.get('content'):
+                images.append(og_img['content'])
+
+        # Saara text nikaalein
+        paragraphs = article_body.find_all(['p', 'h1', 'h2', 'h3', 'h4', 'li'])
+        text_parts = []
+        for p in paragraphs:
+            t = p.get_text(strip=True)
+            if len(t) > 25:
+                text_parts.append(t)
+
+        full_text = "\n\n".join(text_parts)
+
+        # Text limit (AI token limit ke liye)
+        if len(full_text) > 8000:
+            full_text = full_text[:8000]
+
+        print("Scraped: " + str(len(images)) + " images | " + str(len(full_text)) + " chars")
+        return full_text, images
+
+    except Exception as e:
+        print("Scrape error: " + str(e))
+        return "", []
 
 # ==========================================
 # GEMINI FUNCTION
@@ -177,8 +243,14 @@ def get_gemini_response(prompt):
             try:
                 url = "https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent?key=" + key
                 headers = {'Content-Type': 'application/json'}
-                data = {"contents": [{"parts": [{"text": prompt}]}]}
-                response = requests.post(url, headers=headers, json=data, timeout=30)
+                data = {
+                    "contents": [{"parts": [{"text": prompt}]}],
+                    "generationConfig": {
+                        "temperature": 0.4,
+                        "maxOutputTokens": 8192
+                    }
+                }
+                response = requests.post(url, headers=headers, json=data, timeout=60)
                 if response.status_code == 200:
                     result = response.json()
                     if 'candidates' in result and result['candidates']:
@@ -212,14 +284,14 @@ def get_groq_response(prompt):
             "messages": [
                 {
                     "role": "system",
-                    "content": "You are a professional English content writer. You ONLY output the final English result in the exact requested format. You NEVER explain, reason, think out loud, or write your thoughts. You NEVER use placeholders like [English Title Here]."
+                    "content": "You are a professional English blog writer specializing in nail art. You ONLY output the final result in the exact requested format. You NEVER explain, reason, or use placeholders."
                 },
                 {"role": "user", "content": prompt}
             ],
-            "temperature": 0.3,
-            "max_tokens": 3000
+            "temperature": 0.4,
+            "max_tokens": 6000
         }
-        response = requests.post(url, headers=headers, json=data, timeout=30)
+        response = requests.post(url, headers=headers, json=data, timeout=60)
         if response.status_code == 200:
             result = response.json()
             content = result['choices'][0]['message']['content'].strip()
@@ -248,21 +320,21 @@ def get_openrouter_response(prompt):
             "Authorization": "Bearer " + OPENROUTER_API_KEY,
             "Content-Type": "application/json",
             "HTTP-Referer": YOUR_BLOG_URL,
-            "X-Title": "Nail Art Blog"
+            "X-Title": "Nailovia Blog"
         }
         data = {
             "model": OPENROUTER_MODEL,
             "messages": [
                 {
                     "role": "system",
-                    "content": "You are a professional English content writer. You ONLY output the final English result in the exact requested format. You NEVER explain, reason, think out loud, or write your thoughts. You NEVER use placeholders like [English Title Here]."
+                    "content": "You are a professional English blog writer specializing in nail art. You ONLY output the final result in the exact requested format. You NEVER explain, reason, or use placeholders."
                 },
                 {"role": "user", "content": prompt}
             ],
-            "temperature": 0.3,
-            "max_tokens": 3000
+            "temperature": 0.4,
+            "max_tokens": 6000
         }
-        response = requests.post(url, headers=headers, json=data, timeout=30)
+        response = requests.post(url, headers=headers, json=data, timeout=60)
         if response.status_code == 200:
             result = response.json()
             content = result['choices'][0]['message']['content'].strip()
@@ -298,32 +370,37 @@ def get_ai_response(prompt):
     return None
 
 # ==========================================
-# PROMPT BUILDER (English Rewrite)
+# PROMPT BUILDER (Listicle Style - HTML Output)
 # ==========================================
 
-def build_prompt(source_title, original_content, strict_mode=False):
-    prompt = "TASK: Rewrite the following nail art news/article in original English.\n\n"
-    prompt += "INPUT TITLE:\n"
-    prompt += source_title + "\n\n"
-    prompt += "INPUT ARTICLE:\n"
-    prompt += original_content + "\n\n"
-    prompt += "RULES:\n"
-    prompt += "- Output ONLY the final result. Do NOT write your thinking, reasoning, or explanation.\n"
-    prompt += "- Do NOT repeat the instructions. Do NOT write 'We need to...' or 'Let me...'.\n"
-    prompt += "- Do NOT use placeholders like [English Title Here] or [English Content Here].\n"
-    prompt += "- Output MUST be 100% English. Do NOT use Urdu, Arabic, Hindi, or any other script.\n"
-    prompt += "- Keep facts, numbers, and names unchanged.\n"
-    prompt += "- Make it engaging, SEO-friendly, and suitable for a nail art blog.\n"
-    prompt += "- Keep the article concise but informative.\n\n"
+def build_prompt(source_title, original_content, image_count, strict_mode=False):
+    prompt = "TASK: Write a comprehensive, long-form, SEO-optimized listicle blog post in ENGLISH based on the source content below.\n\n"
+    prompt += "SOURCE TITLE: " + source_title + "\n\n"
+    prompt += "SOURCE CONTENT:\n" + original_content + "\n\n"
+    prompt += "SOURCE HAS " + str(image_count) + " IMAGES AVAILABLE.\n\n"
+
+    prompt += "STRICT RULES:\n"
+    prompt += "- Output ONLY the final result in HTML. No thinking, no reasoning, no explanation.\n"
+    prompt += "- The article MUST be a listicle (numbered list of designs/ideas).\n"
+    prompt += "- Minimum 10 items in the list, maximum 25 items.\n"
+    prompt += "- EACH item MUST have:\n"
+    prompt += "  * An <h3> subheading with the design name\n"
+    prompt += "  * A detailed paragraph (3-5 sentences) describing the design\n"
+    prompt += "  * A 'How to recreate' section with step-by-step tips\n"
+    prompt += "- Insert <img> placeholder tags like <img data-img='1'>, <img data-img='2'> after each item's H3. We will replace them with real images.\n"
+    prompt += "- Use proper HTML tags: <h2>, <h3>, <p>, <ul>, <li>, <strong>, <em>.\n"
+    prompt += "- Do NOT use placeholders like [Title Here]. Write real content.\n"
+    prompt += "- Output MUST be 100% English. No other scripts.\n"
+    prompt += "- Make it engaging, friendly, and informative for a nail art audience.\n"
+    prompt += "- Include a short intro paragraph and a conclusion.\n\n"
 
     if strict_mode:
-        prompt += "!!!!! EXTREME WARNING !!!!!\n"
-        prompt += "Your previous response was REJECTED because it contained non-English text or placeholders.\n"
-        prompt += "This time, output ONLY the final English result in the exact format below.\n\n"
+        prompt += "!!!!! WARNING !!!!!\n"
+        prompt += "Your previous response was rejected. Output ONLY the final English HTML listicle in the exact format below.\n\n"
 
     prompt += "OUTPUT FORMAT (follow exactly, nothing else):\n"
-    prompt += "TITLE: <english title here>\n"
-    prompt += "CONTENT: <english content here>\n"
+    prompt += "TITLE: <SEO optimized title with year 2026>\n"
+    prompt += "CONTENT: <full HTML article here>\n"
     return prompt
 
 # ==========================================
@@ -336,14 +413,14 @@ def parse_ai_response(response):
 
     response_lower = response.lower()
     garbage_signs = [
-        "we need to", "let's see", "let me", "wait,", "actually", "we must",
-        "[english title here]", "[english content here]",
-        "task:", "input title:", "input article:", "rules:", "output format:",
-        "here is the", "here's the",
+        "we need to", "let's see", "let me", "wait,", "actually we must",
+        "[title here]", "[content here]", "[english title here]",
+        "task:", "input title:", "rules:", "output format:",
+        "here is the", "here's the", "i cannot", "i can't",
     ]
     for sign in garbage_signs:
         if sign in response_lower:
-            print("Garbage detected in AI response: " + sign)
+            print("Garbage detected: " + sign)
             return None, None
 
     try:
@@ -354,13 +431,13 @@ def parse_ai_response(response):
             title_part = title_part.replace("TITLE:", "").strip()
             return (title_part if title_part else None, content_part if content_part else None)
         else:
-            print("AI response format invalid (missing TITLE/CONTENT markers)")
+            print("AI format invalid (missing TITLE/CONTENT)")
             return None, None
     except Exception as e:
         print("Parse error: " + str(e))
         return None, None
 
-def process_content_with_ai(source_title, original_content):
+def process_content_with_ai(source_title, original_content, image_count):
     final_title = source_title
     final_content = None
     last_response = None
@@ -368,7 +445,7 @@ def process_content_with_ai(source_title, original_content):
     for attempt in range(3):
         print("AI Attempt " + str(attempt + 1) + "/3")
         strict = (attempt > 0)
-        prompt = build_prompt(source_title, original_content, strict_mode=strict)
+        prompt = build_prompt(source_title, original_content, image_count, strict_mode=strict)
         response = get_ai_response(prompt)
         if not response:
             print("AI ne jawab nahi diya. Retry...")
@@ -386,32 +463,29 @@ def process_content_with_ai(source_title, original_content):
         temp_title = temp_title.strip()
         temp_content = temp_content.strip()
 
-        title_has_bad = has_non_english_script(temp_title)
-        content_has_bad = has_non_english_script(temp_content)
-        title_has_english = has_english_letters(temp_title)
-        content_has_english = has_english_letters(temp_content)
-
-        if not title_has_bad and not content_has_bad and title_has_english and content_has_english and temp_content:
-            final_title = temp_title
-            final_content = temp_content
-            print("English content valid.")
-            break
-        else:
-            print("Bad characters detected! Retrying...")
+        # Check for bad scripts (non-English)
+        if has_non_english_script(temp_title) or has_non_english_script(temp_content):
+            print("Non-English script detected. Retrying...")
             time.sleep(2)
+            continue
+
+        if not has_english_letters(temp_content) or len(temp_content) < 500:
+            print("Content too short or not English. Retrying...")
+            time.sleep(2)
+            continue
+
+        final_title = temp_title
+        final_content = temp_content
+        print("English listicle content valid. Length: " + str(len(final_content)))
+        break
 
     if not final_content and last_response:
-        print("Teen attempts fail. Aakhri response clean kar rahe hain.")
+        print("3 attempts failed. Using last response anyway.")
         final_title, final_content = parse_ai_response(last_response)
-        if final_title:
-            final_title = final_title.strip()
-        if final_content:
-            final_content = final_content.strip()
 
     if not final_content:
-        print("AI fail. Using original English content.")
-        final_title = source_title
-        final_content = original_content
+        print("AI completely failed.")
+        return None, None
 
     if not final_title:
         final_title = source_title
@@ -419,33 +493,58 @@ def process_content_with_ai(source_title, original_content):
     return final_title, final_content
 
 # ==========================================
-# IMAGE OPTIMIZATION FUNCTION
+# IMAGE INJECTION (Insert Images into HTML)
 # ==========================================
 
-def optimize_image_tag(img_tag, is_lcp=True):
-    if img_tag is None:
-        return img_tag
-    try:
-        if is_lcp:
-            img_tag['loading'] = 'eager'
-            img_tag['fetchpriority'] = 'high'
-        else:
-            img_tag['loading'] = 'lazy'
-            img_tag['fetchpriority'] = 'auto'
+def inject_images_into_html(html_content, image_urls):
+    """
+    AI ke <img data-img='N'> placeholders ko real images se replace karta hai.
+    """
+    if not image_urls:
+        return html_content
 
-        img_tag['decoding'] = 'async'
+    used = set()
+    counter = [0]
 
-        if not img_tag.get('width'):
-            img_tag['width'] = '800'
-        if not img_tag.get('height'):
-            img_tag['height'] = '450'
-        if not img_tag.get('alt'):
-            img_tag['alt'] = 'Nail Art Image'
-        if not img_tag.get('referrerpolicy'):
-            img_tag['referrerpolicy'] = 'no-referrer'
-    except Exception as e:
-        print("Image optimize error: " + str(e))
-    return img_tag
+    def replacer(match):
+        idx = int(match.group(1)) - 1
+        if idx < 0 or idx >= len(image_urls):
+            # Fallback: use next available image
+            while counter[0] < len(image_urls) and counter[0] in used:
+                counter[0] += 1
+            if counter[0] >= len(image_urls):
+                return ""
+            idx = counter[0]
+        used.add(idx)
+        url = image_urls[idx]
+        counter[0] = idx + 1
+        return (
+            '<img src="' + url + '" alt="Nail Art Design" '
+            'loading="lazy" decoding="async" width="800" height="450" '
+            'referrerpolicy="no-referrer" style="max-width:100%; height:auto; margin:12px 0; border-radius:8px;">'
+        )
+
+    # Pattern: <img data-img='N'> or <img data-img="N">
+    html_content = re.sub(r"<img[^>]*data-img=['\"](\d+)['\"][^>]*>", replacer, html_content)
+
+    # Agar koi placeholder nahi tha, to har 500 chars pe image insert karein
+    if not re.search(r'<img\s+src=', html_content, re.I):
+        print("No placeholders found. Injecting images manually...")
+        paragraphs = html_content.split('</h3>')
+        new_parts = []
+        img_idx = 0
+        for i, part in enumerate(paragraphs):
+            new_parts.append(part)
+            if i < len(paragraphs) - 1 and img_idx < len(image_urls):
+                new_parts.append(
+                    '</h3><img src="' + image_urls[img_idx] + '" alt="Nail Art Design" '
+                    'loading="lazy" decoding="async" width="800" height="450" '
+                    'referrerpolicy="no-referrer" style="max-width:100%; height:auto; margin:12px 0; border-radius:8px;">'
+                )
+                img_idx += 1
+        html_content = ''.join(new_parts)
+
+    return html_content
 
 # ==========================================
 # BLOGGER FUNCTION
@@ -482,9 +581,9 @@ def fetch_and_post_news():
     posted_hashes = load_posted_hashes()
     print("URLs: " + str(len(posted_urls)) + " | Titles: " + str(len(posted_titles)) + " | Images: " + str(len(posted_images)) + " | Hashes: " + str(len(posted_hashes)))
 
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/114.0.0.0 Safari/537.36'}
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'}
 
-    MAX_POSTS_PER_RUN = 14
+    MAX_POSTS_PER_RUN = 6
     posts_published = 0
 
     for category_label, feed_url in FEEDS.items():
@@ -523,83 +622,66 @@ def fetch_and_post_news():
                 print("Skip Title: " + news_title[:50])
                 continue
 
-            raw_content = entry.content[0].value if hasattr(entry, 'content') and entry.content else entry.summary
-            soup = BeautifulSoup(raw_content, 'html.parser')
-            img_tag = soup.find('img')
+            # === STEP 1: Full article scrape ===
+            print("Scraping full article: " + news_title[:50])
+            full_text, all_images = scrape_full_article(news_link, headers)
 
-            if not img_tag:
-                try:
-                    article_req = requests.get(news_link, headers=headers, timeout=10)
-                    article_soup = BeautifulSoup(article_req.text, 'html.parser')
-                    meta_img = article_soup.find('meta', property='og:image')
-                    if meta_img and meta_img.get('content'):
-                        img_url = meta_img['content']
-                        img_tag = BeautifulSoup("<img src='" + img_url + "' alt='Nail Art Image' />", 'html.parser').img
-                except:
-                    pass
-
-            if not img_tag:
-                print("No Image: " + news_title[:50])
+            if not full_text or len(full_text) < 400:
+                print("Article too short. Skip.")
                 continue
 
-            img_src = img_tag.get('src', '')
-            if img_src and img_src in posted_images:
-                print("Skip Image: " + news_title[:50])
+            if not all_images or len(all_images) < 3:
+                print("Not enough images (" + str(len(all_images)) + "). Skip.")
                 continue
 
-            clean_text = soup.get_text(separator="\n").strip()
-
-            # Filter: Only post nail-related content
-            if not is_nail_related(news_title, clean_text):
+            # === STEP 2: Nail-related filter ===
+            if not is_nail_related(news_title, full_text):
                 print("Not nail related. Skip: " + news_title[:50])
                 continue
 
-            content_hash_value = content_hash(clean_text)
+            # === STEP 3: Duplicate content check ===
+            content_hash_value = content_hash(full_text)
             if content_hash_value and content_hash_value in posted_hashes:
-                print("Skip Content (duplicate): " + news_title[:50])
+                print("Duplicate content. Skip: " + news_title[:50])
                 continue
 
-            print("AI Processing: " + news_title[:60])
-            final_title, final_content = process_content_with_ai(news_title, clean_text)
+            # === STEP 4: AI processing ===
+            print("AI Processing: " + news_title[:60] + " | Images: " + str(len(all_images)))
+            urdu_title, ai_content = process_content_with_ai(news_title, full_text, len(all_images))
 
-            if not final_content:
+            if not ai_content:
                 print("AI fail. Skip.")
                 continue
 
-            # Optimize first image
-            img_tag = optimize_image_tag(img_tag, is_lcp=True)
-            image_html = str(img_tag)
+            # === STEP 5: Inject real images into HTML ===
+            final_content_html = inject_images_into_html(ai_content, all_images)
 
-            final_html_content = (
-                image_html
-                + "<br><br><p>"
-                + final_content
-                + "</p><br><br><p><em>Source: "
-                + category_label
-                + "</em></p>"
+            # Add source credit
+            final_content_html += (
+                '<br><br><p><em>Source: ' + category_label +
+                ' | Original: <a href="' + news_link + '" rel="nofollow">' +
+                news_title + '</a></em></p>'
             )
 
+            # === STEP 6: Publish to Blogger ===
             final_label = LABEL_MAP.get(category_label, category_label)
-
-            post_url = post_to_blogger(final_title, final_html_content, [final_label])
+            post_url = post_to_blogger(urdu_title, final_content_html, [final_label])
 
             if post_url:
                 save_posted_url(news_link)
                 save_posted_title(normalized_title)
-                if img_src:
-                    save_posted_image(img_src)
                 save_posted_hash(content_hash_value)
+                for img in all_images[:5]:
+                    save_posted_image(img)
 
                 posted_urls.add(news_link)
                 posted_titles.add(normalized_title)
-                if img_src:
-                    posted_images.add(img_src)
                 posted_hashes.add(content_hash_value)
 
                 posts_published += 1
                 posted_from_this_feed = True
 
-                print("Post " + str(posts_published) + "/" + str(MAX_POSTS_PER_RUN) + " published with label: " + final_label + " (from " + category_label + ")")
+                print("Post " + str(posts_published) + "/" + str(MAX_POSTS_PER_RUN) + " published! Label: " + final_label)
                 print("=" * 50)
 
     print("\nTotal posts published this run: " + str(posts_published))
